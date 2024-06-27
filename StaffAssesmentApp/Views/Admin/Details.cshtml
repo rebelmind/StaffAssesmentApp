@@ -1,0 +1,46 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model StaffAssessmentApp.Models.DTOs.TestDto
+
+@{
+    ViewData["Title"] = "Test Details";
+}
+
+<h1>Test Details</h1>
+
+<div class="form-group">
+    <label class="control-label">Title</label>
+    <p class="form-control-static">@Model.Title</p>
+</div>
+<div class="form-group">
+    <label class="control-label">Description</label>
+    <p class="form-control-static">@Model.Description</p>
+</div>
+
+<h3>Questions</h3>
+@foreach (var question in Model.Questions)
+{
+    <div class="form-group">
+        <label class="control-label">Question</label>
+        <p class="form-control-static">@question.QuestionText</p>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Type</label>
+        <p class="form-control-static">@question.QuestionType</p>
+    </div>
+
+    <h4>Answers</h4>
+    @foreach (var answer in question.Answers)
+    {
+        <div class="form-group">
+            <label class="control-label">Answer</label>
+            <p class="form-control-static">@answer.AnswerText</p>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" disabled @(answer.IsCorrect ? "checked" : "") /> Is Correct
+                </label>
+            </div>
+        </div>
+    }
+}

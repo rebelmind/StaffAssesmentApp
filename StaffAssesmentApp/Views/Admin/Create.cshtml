@@ -1,0 +1,106 @@
+﻿@model StaffAssessmentApp.Models.DTOs.TestDto
+
+@{
+    ViewData["Title"] = "Create Test";
+}
+
+<h1>Create Test</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Title" class="control-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <h3>Questions</h3>
+    <div id="questions">
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            <div class="form-group question" data-index="@i">
+                <label asp-for="Questions[i].QuestionText" class="control-label"></label>
+                <input asp-for="Questions[i].QuestionText" class="form-control" />
+                <span asp-validation-for="Questions[i].QuestionText" class="text-danger"></span>
+
+                <label asp-for="Questions[i].QuestionType" class="control-label"></label>
+                <select asp-for="Questions[i].QuestionType" class="form-control">
+                    <option value="SingleChoice">Single Choice</option>
+                    <option value="MultipleChoice">Multiple Choice</option>
+                    <option value="OpenText">Open Text</option>
+                </select>
+                <span asp-validation-for="Questions[i].QuestionType" class="text-danger"></span>
+
+                <h4>Answers</h4>
+                <div id="answers-@i">
+                    @for (int j = 0; j < Model.Questions[i].Answers.Count; j++)
+                    {
+                        <div class="form-group answer" data-index="@j">
+                            <label asp-for="Questions[i].Answers[j].AnswerText" class="control-label"></label>
+                            <input asp-for="Questions[i].Answers[j].AnswerText" class="form-control" />
+                            <span asp-validation-for="Questions[i].Answers[j].AnswerText" class="text-danger"></span>
+
+                            <label asp-for="Questions[i].Answers[j].IsCorrect" class="control-label"></label>
+                            @* <input type="hidden" name="Questions[@i].Answers[@j].IsCorrect" value="false" /> *@
+                            <input asp-for="Questions[i].Answers[j].IsCorrect" class="form-check-input" type="checkbox" value="true" />
+                            <span asp-validation-for="Questions[i].Answers[j].IsCorrect" class="text-danger"></span>
+                        </div>
+                    }
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addAnswer(@i)">Add Answer</button>
+            </div>
+        }
+    </div>
+    <button type="button" class="btn btn-secondary" onclick="addQuestion()">Add Question</button>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function addQuestion() {
+            var questionIndex = document.querySelectorAll('#questions .question').length;
+            var questionDiv = document.createElement('div');
+            questionDiv.className = 'form-group question';
+            questionDiv.setAttribute('data-index', questionIndex);
+            questionDiv.innerHTML = `
+                        <label for="Questions_${questionIndex}__QuestionText" class="control-label">QuestionText</label>
+                        <input class="form-control" type="text" id="Questions_${questionIndex}__QuestionText" name="Questions[${questionIndex}].QuestionText" value="" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Questions[${questionIndex}].QuestionText" data-valmsg-replace="true"></span>
+                        <label for="Questions_${questionIndex}__QuestionType" class="control-label">QuestionType</label>
+                        <select class="form-control" id="Questions_${questionIndex}__QuestionType" name="Questions[${questionIndex}].QuestionType">
+                            <option value="SingleChoice">Single Choice</option>
+                            <option value="MultipleChoice">Multiple Choice</option>
+                            <option value="OpenText">Open Text</option>
+                        </select>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Questions[${questionIndex}].QuestionType" data-valmsg-replace="true"></span>
+                        <h4>Answers</h4>
+                        <div id="answers-${questionIndex}">
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="addAnswer(${questionIndex})">Add Answer</button>
+                    `;
+            document.getElementById('questions').appendChild(questionDiv);
+        }
+
+        function addAnswer(questionIndex) {
+            var answerIndex = document.querySelectorAll(`#answers-${questionIndex} .answer`).length;
+            var answerDiv = document.createElement('div');
+            answerDiv.className = 'form-group answer';
+            answerDiv.setAttribute('data-index', answerIndex);
+            answerDiv.innerHTML = `
+                        <label for="Questions_${questionIndex}__Answers_${answerIndex}__AnswerText" class="control-label">AnswerText</label>
+                        <input class="form-control" type="text" id="Questions_${questionIndex}__Answers_${answerIndex}__AnswerText" name="Questions[${questionIndex}].Answers[${answerIndex}].AnswerText" value="" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Questions[${questionIndex}].Answers[${answerIndex}].AnswerText" data-valmsg-replace="true"></span>
+                        <label for="Questions_${questionIndex}__Answers_${answerIndex}__IsCorrect" class="control-label">IsCorrect</label>
+                        
+                        <input class="form-check-input" type="checkbox" id="Questions_${questionIndex}__Answers_${answerIndex}__IsCorrect" name="Questions[${questionIndex}].Answers[${answerIndex}].IsCorrect" value="true" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Questions[${questionIndex}].Answers[${answerIndex}].IsCorrect" data-valmsg-replace="true"></span>
+                    `;
+            document.getElementById(`answers-${questionIndex}`).appendChild(answerDiv);
+        }
+    </script>
+}

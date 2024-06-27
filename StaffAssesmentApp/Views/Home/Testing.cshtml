@@ -1,0 +1,36 @@
+﻿@using StaffAssessmentApp.Helpers.Enums
+@model StaffAssessmentApp.Models.DTOs.UserTestDto
+
+<h1>@Model.Test.Title</h1>
+<p>@Model.Test.Description</p>
+
+<form asp-action="SubmitTest" method="post">
+    <input type="hidden" asp-for="TestId" />
+
+    @for (int i = 0; i < Model.Test.Questions.Count; i++)
+    {
+        <div>
+            <p>@(i + 1). @Model.Test.Questions[i].QuestionText</p>
+            @if (Model.Test.Questions[i].QuestionType == QuestionType.SingleChoice)
+            {
+                @for (int j = 0; j < Model.Test.Questions[i].Answers.Count; j++)
+                {
+                    <input type="radio" name="Test.Questions[@i].SelectedAnswerId" value="@Model.Test.Questions[i].Answers[j].Id" /> @Model.Test.Questions[i].Answers[j].AnswerText <br />
+                }
+            }
+            else if (Model.Test.Questions[i].QuestionType == QuestionType.MultipleChoice)
+            {
+                @for (int j = 0; j < Model.Test.Questions[i].Answers.Count; j++)
+                {
+                    <input type="checkbox" name="Test.Questions[@i].SelectedAnswerIds" value="@Model.Test.Questions[i].Answers[j].Id" /> @Model.Test.Questions[i].Answers[j].AnswerText <br />
+                }
+            }
+            else if (Model.Test.Questions[i].QuestionType == QuestionType.OpenText)
+            {
+                <textarea name="Test.Questions[@i].AnswerText"></textarea> <br />
+            }
+        </div>
+        <hr />
+    }
+    <button type="submit">Submit</button>
+</form>
