@@ -35,6 +35,10 @@ namespace StaffAssesmentApp.Controllers
         public async Task<IActionResult> Testing()
         {
             var test = await _testService.GetUserTestDtoByTest();
+            if (test == null)
+            {
+                return View();
+            }
             test.StartTime = DateTime.Now;
             return View(test);
         }
